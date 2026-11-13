@@ -21,7 +21,7 @@
 
     --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 
-    --radius: 12px;
+    --radius: 15px;
     --transition: 300ms ease-in-out;
 }
 
@@ -34,4 +34,58 @@
     font-family: IranSans;
     color: var(--text);
     transition: var(--transition);
+}
+
+body {
+    background: linear-gradient(to right, var(--background), var(--background-secondary));
+}
+
+header {
+    width: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    gap: 25%;
+    text-align: center;
+    box-shadow: var(--shadow);
+    padding: 8px;
+    margin-top: 20px;
+    border-radius: 60px;
+}
+
+header div {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+
+header img {
+    display: block;
+    max-width: 70px;
+    height: auto;
+    border-radius: 50%;
+}
+
+header nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+header nav a {
+    width: 100px;
+    padding: 5px;
+    border-radius: var(--radius);
+    border: 2px solid var(--border);
+    background: var(--background-secondary);
+    font-size: 14px;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-light);
 }
