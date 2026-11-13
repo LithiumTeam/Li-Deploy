@@ -5,9 +5,9 @@
     </div>
     <div style="flex-direction: column;">
         <nav>
-            <a href="/">صفحه اصلی</a>
-            <a href="/login">ورود</a>
-            <a href="/support">پشتیبانی</a>
+            <a id="main-page">صفحه اصلی</a>
+            <a id="login-page">ورود</a>
+            <a id="support-page">پشتیبانی</a>
             <a href="https://lithiumteam.github.io">وبسایت لیتیوم</a>
         </nav>
     </div>

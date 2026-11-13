@@ -13,6 +13,7 @@
     --text-muted: #777087;
 
     --border: #302744;
+    --border-hover: #5d488e;
 
     --accent: #C084FC;
     --success: #34D399;
@@ -88,4 +89,39 @@ header nav a {
 a {
     text-decoration: none;
     color: var(--primary-light);
+    cursor: pointer;
+}
+
+main {
+    margin-top: 150px;
+    text-align: center;
+}
+
+input {
+    padding: 10px;
+    width: 200px;
+    border-radius: 7px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+}
+
+input:focus {
+    outline: none;
+    border: 2px solid var(--border-hover);
+}
+
+button[type="submit"] {
+    width: 220px;
+    padding: 10px;
+    border-radius: 7px;
+    border: 2px solid var(--primary);
+    background: var(--primary);
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    /* background: none;
+    color: var(--primary); */
+    background: var(--primary-hover);
+    border: 2px solid var(--primary-hover);
 }
