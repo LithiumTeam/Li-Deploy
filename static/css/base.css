@@ -1,0 +1,37 @@
+:root {
+    --primary: #8B5CF6;
+    --primary-hover: #7C3AED;
+    --primary-light: #A78BFA;
+
+    --background: #0F0B1A;
+    --background-secondary: #171225;
+    --surface: #1E1830;
+    --surface-hover: #29213D;
+
+    --text: #F5F3FF;
+    --text-secondary: #A8A0BA;
+    --text-muted: #777087;
+
+    --border: #302744;
+
+    --accent: #C084FC;
+    --success: #34D399;
+    --danger: #FB7185;
+    --warning: #FBBF24;
+
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+
+    --radius: 12px;
+    --transition: 300ms ease-in-out;
+}
+
+@font-face {
+    font-family: IranSans;
+    src: url("/static/font/IRANSansXV.woff");
+}
+
+* {
+    font-family: IranSans;
+    color: var(--text);
+    transition: var(--transition);
+}
