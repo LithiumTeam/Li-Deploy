@@ -9,11 +9,12 @@
 </head>
 <body>
     
-    <?php
-        include __DIR__ . "/../static/include/header.php";
-    ?>
-
+    <?php include __DIR__ . "/../static/include/header.php"; ?>
+    
     <main id="app"></main>
+
+    <?php include __DIR__ . "/../static/include/footer.php"; ?>
+
     <script src="/static/js/app.js"></script>
 
 </body>
