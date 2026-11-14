@@ -6,7 +6,7 @@ const render_login = () => {
 
 <div>
     <form action="/api/login" method="post">
-        <h1>ورود</h1>
+        <h1>ورود به حساب</h1>
         <input placeholder="ایمیل (پست الکترونیکی)" name="email" type="email"><br><br>
         <button type="submit">ادامه</button>
     </form>
