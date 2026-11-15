@@ -1,53 +1,108 @@
-
 <?php
 
 session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 
+function response(int $status, array $data): void {
+    http_response_code($status);
+    echo json_encode($data);
+    exit;
+}
+
 $code = $_POST['code'] ?? '';
 
 if (!preg_match('/^\d{4}$/', (string) $code)) {
-    http_response_code(400);
-    exit(json_encode([
+    response(400, [
         'success' => false,
         'error' => 'Invalid code'
-    ]));
+    ]);
 }
 
 if (
     !isset($_SESSION['login_code']) ||
     !isset($_SESSION['login_email'])
 ) {
-    http_response_code(401);
-    exit(json_encode([
+    response(401, [
         'success' => false,
         'error' => 'Login session expired'
-    ]));
+    ]);
 }
 
-if (password_verify((string) $code, $_SESSION['login_code'])) {
+if (!password_verify(
+    (string) $code,
+    $_SESSION['login_code']
+)) {
+    response(401, [
+        'success' => false,
+        'error' => 'Incorrect code'
+    ]);
+}
+
+mysqli_report(
+    MYSQLI_REPORT_ERROR |
+    MYSQLI_REPORT_STRICT
+);
+
+try {
+
+    $conn = new mysqli(
+        'localhost',
+        'li_deploy',
+        'YourStrongPassword123!',
+        'auth_system'
+    );
+
+    $conn->set_charset('utf8mb4');
+
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ");
 
     $email = $_SESSION['login_email'];
+
+    $stmt = $conn->prepare("
+        INSERT INTO users (email)
+        VALUES (?)
+        ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)
+    ");
+
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+
+    $user_id = $conn->insert_id;
+
+    $stmt->close();
+    $conn->close();
+
+    session_regenerate_id(true);
 
     unset($_SESSION['login_code']);
     unset($_SESSION['login_email']);
 
-    session_regenerate_id(true);
-
+    $_SESSION['user_id'] = $user_id;
     $_SESSION['user_email'] = $email;
-    $_SESSION['session_number'] = random_int(1000000000000000,9999999999999999);
     $_SESSION['logged_in'] = true;
 
-    echo json_encode([
-        'success' => true
+    response(200, [
+        'success' => true,
+        'user_id' => $user_id
     ]);
 
-} else {
-    http_response_code(401);
+} catch (Throwable $e) {
 
-    echo json_encode([
+    error_log(
+        'Login verification error: ' .
+        $e->getMessage()
+    );
+
+    response(500, [
         'success' => false,
-        'error' => 'Incorrect code'
+        'error' => 'Database error'
     ]);
+
 }

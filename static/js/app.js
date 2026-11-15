@@ -115,7 +115,7 @@ const render_login = () => {
                     } else {
                         auth_box.innerHTML = `
                             <h2>کد وارد شده معتبر نیست!</h2>
-                            <button onclick="render_login()">تلاش مجدد</button>
+                            <button type="submit" onclick="render_login()">تلاش مجدد</button>
                         `;
                     }
 
@@ -124,7 +124,7 @@ const render_login = () => {
 
                     auth_box.innerHTML = `
                         <h2>خطا در بررسی کد!</h2>
-                        <button onclick="render_login()">تلاش مجدد</button>
+                        <button type="submit" onclick="render_login()">تلاش مجدد</button>
                     `;
                 }
             });
@@ -134,7 +134,7 @@ const render_login = () => {
 
             auth_box.innerHTML = `
                 <h2>خطا در ارسال درخواست!</h2>
-                <button onclick="render_login()">تلاش مجدد</button>
+                <button type="submit" onclick="render_login()">تلاش مجدد</button>
             `;
         }
     });
@@ -150,6 +150,32 @@ const render_main = () => {
     `;
 };
 
+const render_dashboard = () => {
+    app.innerHTML = `
+        <div>
+            <h1>داشبورد</h1>
+            <div>
+                <hr>
+                <div class="flex">
+                    <div>
+                        <span>سلام <span style="color: var(--accent);">macsepehri</span>!</span><br>
+                        <span>تعداد پروژه ها : <span style="color: var(--accent);">0</span></span><br><br>
+                        <button id="logout-button">خروج از حساب</button>
+                    </div>
+                    <div>
+                        <button type="submit">ساخت پروژه</button><br><br>
+                        <button type="submit">حذف پروژه</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('logout-button').addEventListener('click',(ev)=>{
+        window.location.href = '/api/logout/index.php';
+    })
+}
+
 const update = (new_state) => {
     state = new_state;
 
@@ -159,6 +185,13 @@ const update = (new_state) => {
     } else if (state === 1) {
         document.title = 'Li-Deploy | ورود';
         render_login();
+    } else if (state === 2) {
+        if (!logged_in) {
+            update(1);
+        } else {
+            document.title = 'Li-Deploy | داشبورد';
+            render_dashboard();
+        }
     }
 };
 
@@ -171,7 +204,9 @@ try {
         update(1);
     });
 } catch {
-    //
+    document.getElementById('dashboard-page').addEventListener('click', () => {
+        update(2);
+    });
 }
 
 update(0);

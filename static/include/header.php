@@ -1,27 +1,14 @@
 <?php
 
 session_start();
+session_start();
 
-if (isset($_SESSION['logged_in'])) {
-    if ($_SESSION) {
-        $logged_in = true;
-    } else {
-        $logged_in = false;
-    }
-} else {
-    $logged_in = false;
-}
+$logged_in = ($_SESSION['logged_in'] ?? false) === true;
 
 ?>
 
 <script>
-    let logged_in = <?php 
-        if ($logged_in===1) {
-            echo 'true';
-        } else {
-            echo 'false';
-        }
-    ?>
+    const logged_in = <?= json_encode($logged_in) ?>;
 </script>
 
 <header>
