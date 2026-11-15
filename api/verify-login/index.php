@@ -10,6 +10,8 @@ function response(int $status, array $data): void {
     exit;
 }
 
+
+$env = parse_ini_file(__DIR__ . '/../../.env');
 $code = $_POST['code'] ?? '';
 
 if (!preg_match('/^\d{4}$/', (string) $code)) {
@@ -48,9 +50,9 @@ try {
 
     $conn = new mysqli(
         'localhost',
-        'li_deploy',
-        'YourStrongPassword123!',
-        'auth_system'
+        $env['DB_USERNAME'],
+        $env['DB_PASSWORD'],
+        $env['DB_LAST']
     );
 
     $conn->set_charset('utf8mb4');
