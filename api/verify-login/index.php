@@ -36,6 +36,7 @@ if (password_verify((string) $code, $_SESSION['login_code'])) {
     session_regenerate_id(true);
 
     $_SESSION['user_email'] = $email;
+    $_SESSION['session_number'] = random_int(1000000000000000,9999999999999999);
     $_SESSION['logged_in'] = true;
 
     echo json_encode([
