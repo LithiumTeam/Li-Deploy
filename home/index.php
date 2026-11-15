@@ -16,6 +16,8 @@
     <?php include __DIR__ . "/../static/include/footer.php"; ?>
 
     <script src="/static/js/app.js"></script>
+    <!--  -->
+
 
 </body>
 </html>
