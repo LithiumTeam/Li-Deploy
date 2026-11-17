@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -6,12 +7,19 @@ header('Content-Type: application/json; charset=utf-8');
 
 function response(int $status, array $data): void {
     http_response_code($status);
-    echo json_encode($data);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-
 $env = parse_ini_file(__DIR__ . '/../../.env');
+
+if ($env === false) {
+    response(500, [
+        'success' => false,
+        'error' => 'Configuration error'
+    ]);
+}
+
 $code = $_POST['code'] ?? '';
 
 if (!preg_match('/^\d{4}$/', (string) $code)) {
@@ -28,6 +36,15 @@ if (
     response(401, [
         'success' => false,
         'error' => 'Login session expired'
+    ]);
+}
+
+$email = $_SESSION['login_email'];
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    response(400, [
+        'success' => false,
+        'error' => 'Invalid email'
     ]);
 }
 
@@ -61,11 +78,11 @@ try {
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             email VARCHAR(255) NOT NULL UNIQUE,
+            total_projects INT NOT NULL DEFAULT 0,
+            project_data JSON,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-    ");
-
-    $email = $_SESSION['login_email'];
+");
 
     $stmt = $conn->prepare("
         INSERT INTO users (email)
@@ -81,10 +98,12 @@ try {
     $stmt->close();
     $conn->close();
 
-    session_regenerate_id(true);
+    unset(
+        $_SESSION['login_code'],
+        $_SESSION['login_email']
+    );
 
-    unset($_SESSION['login_code']);
-    unset($_SESSION['login_email']);
+    session_regenerate_id(true);
 
     $_SESSION['user_id'] = $user_id;
     $_SESSION['user_email'] = $email;

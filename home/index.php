@@ -1,3 +1,51 @@
+<?php
+
+session_start();
+
+$total_projects = 0;
+
+$email = $_SESSION['user_email'] ?? '';
+
+if ($email !== '') {
+    $env = parse_ini_file(__DIR__ . '/../.env');
+
+    $conn = new mysqli(
+        'localhost',
+        $env['DB_USERNAME'],
+        $env['DB_PASSWORD'],
+        $env['DB_LAST']
+    );
+
+    if ($conn->connect_error) {
+        die('Database connection failed.');
+    }
+
+    $conn->set_charset('utf8mb4');
+
+    $stmt = $conn->prepare("
+        SELECT total_projects
+        FROM users
+        WHERE email = ?
+    ");
+
+    if (!$stmt) {
+        die('Database query failed.');
+    }
+
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    $total_projects = (int)($user['total_projects'] ?? 0);
+
+    $stmt->close();
+    $conn->close();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -8,15 +56,18 @@
     <title>Li-Deploy</title>
 </head>
 <body>
-    
+
     <?php include __DIR__ . "/../static/include/header.php"; ?>
-    
+
     <main id="app"></main>
 
     <?php include __DIR__ . "/../static/include/footer.php"; ?>
 
-    <script src="/static/js/app.js"></script>
+    <script>
+        const total_projects = <?= json_encode($total_projects) ?>;
+    </script>
 
+    <script src="/static/js/app.js"></script>
 
 </body>
 </html>

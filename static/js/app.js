@@ -159,11 +159,11 @@ const render_dashboard = () => {
                 <div class="flex">
                     <div>
                         <span>سلام <span style="color: var(--accent);">macsepehri</span>!</span><br>
-                        <span>تعداد پروژه ها : <span style="color: var(--accent);">0</span></span><br><br>
+                        <span>تعداد پروژه ها : <span style="color: var(--accent);">${total_projects}</span></span><br><br>
                         <button id="logout-button">خروج از حساب</button>
                     </div>
                     <div>
-                        <button type="submit">ساخت پروژه</button><br><br>
+                        <button id="create-project" type="submit">ساخت پروژه</button><br><br>
                         <button type="submit">حذف پروژه</button>
                     </div>
                 </div>
@@ -173,8 +173,118 @@ const render_dashboard = () => {
 
     document.getElementById('logout-button').addEventListener('click',(ev)=>{
         window.location.href = '/api/logout/index.php';
-    })
-}
+    });
+
+    document.getElementById('create-project').addEventListener('click', () => {
+        document.title = 'Li-Deploy | ساخت پروژه';
+
+        app.innerHTML = `
+            <div>
+                <h1>ساخت پروژه جدید</h1>
+                <hr>
+
+                <form id="project-form">
+                    <div>
+                        <input type="text" id="project-name" placeholder="نام پروژه" required>
+                    </div>
+                    <br>
+
+                    <div>
+                        <input type="file" id="php-source" accept=".php" hidden required>
+
+                        <label for="php-source" class="btn">
+                            آپلود سورس PHP
+                        </label>
+
+                        <p style="color: gray; font-size: 13px;">
+                            این سورس در صفحه ایندکس ("/") قرار می‌گیرد.
+                        </p>
+                    </div>
+
+                    <div id="upload-result"></div>
+                </form>
+            </div>
+        `;
+
+        const fileInput = document.getElementById('php-source');
+
+        fileInput.addEventListener('change', async () => {
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            const projectName = document.getElementById('project-name').value.trim();
+
+            if (!projectName) {
+                alert('لطفاً نام پروژه را وارد کنید.');
+                fileInput.value = '';
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9_-]+$/.test(projectName)) {
+                alert('نام پروژه فقط می‌تواند شامل حروف انگلیسی، اعداد، - و _ باشد.');
+                fileInput.value = '';
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith('.php')) {
+                alert('فقط فایل PHP مجاز است.');
+                fileInput.value = '';
+                return;
+            }
+
+            app.innerHTML = `
+                <div class="loader"></div>
+            `;
+
+            try {
+                const source = await file.text();
+
+                const response = await fetch('/api/project/valid/index.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        project_name: projectName,
+                        source: source
+                    })
+                });
+
+                const data = await response.json();
+
+                app.innerHTML = `
+                    <div class="upload-status">
+                        <h3>${data.success ? 'پروژه ساخته شد' : 'خطا در ساخت پروژه'}</h3>
+                        <p id="upload-message"></p>
+                        <button id="back-dashboard">بازگشت به داشبورد</button>
+                    </div>
+                `;
+
+                document.getElementById('upload-message').textContent = data.message;
+
+                document.getElementById('back-dashboard').addEventListener('click', () => {
+                    update(2);
+                });
+
+            } catch (error) {
+                console.error(error);
+
+                app.innerHTML = `
+                    <div>
+                        <h2>خطا در ارسال درخواست!</h2>
+                        <p>ارتباط با سرور برقرار نشد.</p>
+                        <button id="back-dashboard">بازگشت به داشبورد</button>
+                    </div>
+                `;
+
+                document.getElementById('back-dashboard').addEventListener('click', () => {
+                    update(2);
+                });
+            }
+        });
+    });
+};
 
 const update = (new_state) => {
     state = new_state;
