@@ -197,7 +197,7 @@ const render_dashboard = () => {
                         </label>
 
                         <p style="color: gray; font-size: 13px;">
-                            این سورس در صفحه ایندکس ("/") قرار می‌گیرد.
+                            این سورس در صفحه ایندکس (" / ") قرار می‌گیرد.
                         </p>
                     </div>
 
@@ -252,20 +252,37 @@ const render_dashboard = () => {
                 });
 
                 const data = await response.json();
-
+                let msg;
+                let desc;
+                let button_info;
+                if (data.message.trim()==='in-valid') {
+                    msg = 'خطا در ساخت پروژه';
+                    desc = 'در سورس کد، کد هایی مربوط به فایل ها، دیتابیس هست که میتونه باعث مشکلات برای وبسایت بشه نظیر لو رفتن داده و غیره.';
+                    button_info = ['back-dashboard','بازگشت به داشبورد'];
+                } else {
+                    msg = 'پروژه ساخته شد';
+                    desc = 'پروژه با موفقیت ساخته شد.';
+                    button_info = ['open-project','ادامه'];
+                }
                 app.innerHTML = `
                     <div class="upload-status">
-                        <h3>${data.success ? 'پروژه ساخته شد' : 'خطا در ساخت پروژه'}</h3>
-                        <p id="upload-message"></p>
-                        <button id="back-dashboard">بازگشت به داشبورد</button>
+                        <h3>${msg}</h3>
+                        <p style="width:220px;">${desc}</p>
+                        <button class="btn" id="${button_info[0]}">${button_info[1]}</button>
                     </div>
                 `;
+                
+                console.log(data.message);
 
-                document.getElementById('upload-message').textContent = data.message;
-
-                document.getElementById('back-dashboard').addEventListener('click', () => {
-                    update(2);
-                });
+                try {
+                    document.getElementById('back-dashboard').addEventListener('click', () => {
+                        update(2);
+                    });
+                } catch {
+                    document.getElementById('open-project').addEventListener('click', () => {
+                        app.innerHTML = ``;
+                    });
+                };
 
             } catch (error) {
                 console.error(error);
@@ -274,7 +291,7 @@ const render_dashboard = () => {
                     <div>
                         <h2>خطا در ارسال درخواست!</h2>
                         <p>ارتباط با سرور برقرار نشد.</p>
-                        <button id="back-dashboard">بازگشت به داشبورد</button>
+                        <button class="btn" id="back-dashboard">بازگشت به داشبورد</button>
                     </div>
                 `;
 

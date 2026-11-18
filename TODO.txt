@@ -1,7 +1,3 @@
 ###
 
-Save user in database
-Add session_number
-Save user session by session_number
-Change session_number after every login
-Start dashboard
+Complete creating new peoject
