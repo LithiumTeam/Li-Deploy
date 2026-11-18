@@ -68,6 +68,9 @@ if ($email !== '') {
     </script>
 
     <script src="/static/js/app.js"></script>
+    <script>
+        let session = <?php echo $_SESSION; ?>;
+    </script>
 
 </body>
 </html>
