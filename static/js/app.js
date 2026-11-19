@@ -34,7 +34,7 @@ const render_login = () => {
             <h1>ورود به حساب</h1>
             <input placeholder="ایمیل (پست الکترونیکی)" name="email" type="email" required>
             <br><br>
-            <button type="button" id="continue-login">ادامه</button>
+            <button class="btn" id="continue-login">ادامه</button>
         </div>
     `;
 
@@ -86,7 +86,7 @@ const render_login = () => {
                 <h1>کد ورود</h1>
                 <input placeholder="کد ورود" name="code" type="text" inputmode="numeric" maxlength="4" required>
                 <br><br>
-                <button type="button" id="submit-login">ادامه</button>
+                <button class="btn" id="submit-login">ادامه</button>
                 <pre style="color: gray; font-size: 13px;">یک کد به حساب ایمیل شما ارسال شده.
 <a href="https://gmail.com/" target="_blank" rel="noopener noreferrer">لینک به ایمیل باکس شما</a></pre>
             `;
@@ -117,7 +117,7 @@ const render_login = () => {
 
                     authBox.innerHTML = `
                         <h2>کد وارد شده معتبر نیست!</h2>
-                        <button type="button" id="retry-login">تلاش مجدد</button>
+                        <button class="btn" id="retry-login">تلاش مجدد</button>
                     `;
 
                     document.getElementById('retry-login').addEventListener('click', render_login);
@@ -130,7 +130,7 @@ const render_login = () => {
             authBox.innerHTML = `
                 <h2>خطا در ارسال درخواست!</h2>
                 <p>${escapeHTML(error.message)}</p>
-                <button type="button" id="retry-login">تلاش مجدد</button>
+                <button class="btn" id="retry-login">تلاش مجدد</button>
             `;
 
             document.getElementById('retry-login').addEventListener('click', render_login);
@@ -169,7 +169,7 @@ const render_project_management = async (projectCode) => {
             throw new Error('کد پروژه مشخص نشده است.');
         }
 
-        const data = await request('/api/project/get', {
+        const data = await request('/api/project/get/index.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -251,7 +251,7 @@ const render_dashboard = async () => {
         if (hasProjects && data.project_code) {
             content = '<button id="open-project" class="btn">مشاهده پروژه</button>';
         } else {
-            content = '<button id="create-project" class="btn" type="button">ساخت پروژه</button>';
+            content = '<button id="create-project" class="btn">ساخت پروژه</button>';
         }
 
         const deleteButton = hasProjects
