@@ -10,5 +10,6 @@
 
 # Credit
 <p>By Li-Team</p>
-<p>User's that worked on this project :</p>
+<p>I'll be happy to report any issue that you see :)</p>
+<p>Users that worked on this project :</p>
 <a href="https://github.com/MACsepehri">MACsepehri</a>
