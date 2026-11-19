@@ -87,14 +87,9 @@ try {
 
     // Database connection
 
-    $conn = new mysqli(
-        $env['DB_HOST'] ?? 'localhost',
-        $env['DB_USERNAME'],
-        $env['DB_PASSWORD'],
-        $env['DB_LAST']
-    );
+    require_once __DIR__ . '/../../../static/include/db.php';
 
-    $conn->set_charset('utf8mb4');
+    $conn = db_connect($env);
 
     // Get project
 

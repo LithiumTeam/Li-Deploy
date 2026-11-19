@@ -9,39 +9,40 @@ $email = $_SESSION['user_email'] ?? '';
 if ($email !== '') {
     $env = parse_ini_file(__DIR__ . '/../.env');
 
-    $conn = new mysqli(
-        'localhost',
-        $env['DB_USERNAME'],
-        $env['DB_PASSWORD'],
-        $env['DB_LAST']
-    );
+    require_once __DIR__ . '/../static/include/db.php';
 
-    if ($conn->connect_error) {
-        die('Database connection failed.');
+    try {
+        $conn = db_connect($env ?? []);
+    } catch (Throwable $e) {
+        error_log(
+            'Home database error: ' . $e->getMessage()
+        );
+
+        $conn = null;
     }
 
-    $conn->set_charset('utf8mb4');
+    if ($conn !== null) {
+        $stmt = $conn->prepare("
+            SELECT total_projects
+            FROM users
+            WHERE email = ?
+        ");
 
-    $stmt = $conn->prepare("
-        SELECT total_projects
-        FROM users
-        WHERE email = ?
-    ");
+        if (!$stmt) {
+            die('Database query failed.');
+        }
 
-    if (!$stmt) {
-        die('Database query failed.');
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+
+        $total_projects = (int)($user['total_projects'] ?? 0);
+
+        $stmt->close();
+        $conn->close();
     }
-
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-
-    $total_projects = (int)($user['total_projects'] ?? 0);
-
-    $stmt->close();
-    $conn->close();
 }
 
 ?>
@@ -68,9 +69,6 @@ if ($email !== '') {
     </script>
 
     <script src="/static/js/app.js"></script>
-    <script>
-        let session = <?php echo $_SESSION; ?>;
-    </script>
 
 </body>
 </html>

@@ -53,14 +53,23 @@ try {
         ]);
     }
 
-    $conn = new mysqli(
-        $env['DB_HOST'] ?? 'localhost',
-        $env['DB_USERNAME'],
-        $env['DB_PASSWORD'],
-        $env['DB_LAST']
-    );
+    require_once __DIR__ . '/../../../static/include/db.php';
 
-    $conn->set_charset('utf8mb4');
+    $conn = db_connect($env);
+
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS Projects (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            project_name VARCHAR(255) NOT NULL,
+            manager VARCHAR(255) NOT NULL,
+            manager_id INT NOT NULL,
+            project_code CHAR(8) NOT NULL UNIQUE,
+            source_path TEXT NOT NULL,
+            project_url TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX (manager_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
 
     $stmt = $conn->prepare("
         SELECT COUNT(*) AS total
